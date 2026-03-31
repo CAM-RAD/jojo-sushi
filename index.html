@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JOJO SUSHI — Where Tradition Meets Tomorrow</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0a0a0a;
+      --bg2: #111;
+      --card: #141414;
+      --red: #e63946;
+      --red-glow: rgba(230,57,70,0.3);
+      --gold: #d4a574;
+      --gold-dim: rgba(212,165,116,0.15);
+      --white: #f1f1f1;
+      --gray: #777;
+      --dark: #222;
+    }
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { background: var(--bg); }
+    body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color: var(--white); overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+    h1, h2, h3, .display { font-family: 'Space Grotesk', system-ui, sans-serif; }
+    a { color: inherit; text-decoration: none; }
+    img { display: block; max-width: 100%; }
+
+    /* ─── NOISE OVERLAY ─── */
+    body::after {
+      content: ''; position: fixed; inset: 0; z-index: 9999; pointer-events: none; opacity: 0.035;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-repeat: repeat; background-size: 200px;
+    }
+
+    /* ─── NAV ─── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 20px 40px; transition: background 0.4s, backdrop-filter 0.4s;
+    }
+    nav.scrolled { background: rgba(10,10,10,0.85); backdrop-filter: blur(20px); }
+    .nav-logo { font-family: 'Space Grotesk', sans-serif; font-size: 20px; font-weight: 700; letter-spacing: 0.15em; }
+    .nav-logo span { color: var(--red); }
+    .nav-links { display: flex; gap: 32px; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gray); }
+    .nav-links a { transition: color 0.3s; }
+    .nav-links a:hover { color: var(--red); }
+    .nav-reserve {
+      padding: 10px 24px; border: 1px solid var(--red); border-radius: 4px;
+      font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--red);
+      transition: all 0.3s;
+    }
+    .nav-reserve:hover { background: var(--red); color: var(--bg); }
+
+    /* ─── HERO ─── */
+    .hero {
+      min-height: 100vh; display: flex; align-items: center; justify-content: center;
+      position: relative; overflow: hidden; padding: 120px 40px 80px;
+    }
+    .hero-inner { display: flex; align-items: center; gap: 80px; max-width: 1200px; width: 100%; }
+    .hero-text { flex: 1; }
+    .hero-tag {
+      display: inline-block; padding: 6px 16px; border: 1px solid var(--gold-dim);
+      border-radius: 20px; font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--gold); margin-bottom: 24px;
+    }
+    .hero-title {
+      font-size: clamp(48px, 7vw, 96px); font-weight: 700; line-height: 1;
+      letter-spacing: -0.02em; margin-bottom: 20px;
+    }
+    .hero-title .red { color: var(--red); }
+    .hero-sub {
+      font-size: clamp(16px, 2vw, 22px); font-weight: 300; color: var(--gray);
+      line-height: 1.5; margin-bottom: 40px; max-width: 480px;
+    }
+    .hero-cta {
+      display: inline-flex; align-items: center; gap: 12px;
+      padding: 16px 36px; background: var(--red); border-radius: 6px;
+      font-family: 'Space Grotesk', sans-serif; font-size: 14px; font-weight: 600;
+      letter-spacing: 0.06em; text-transform: uppercase; color: var(--bg);
+      transition: all 0.3s; cursor: pointer; border: none;
+    }
+    .hero-cta:hover { background: #ff4d5a; transform: translateY(-2px); box-shadow: 0 8px 30px var(--red-glow); }
+    .hero-cta .arrow { transition: transform 0.3s; }
+    .hero-cta:hover .arrow { transform: translateX(4px); }
+    .hero-robot { flex-shrink: 0; width: 280px; animation: robotFloat 4s ease-in-out infinite; }
+    @keyframes robotFloat {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-14px); }
+    }
+    .hero-scroll {
+      position: absolute; bottom: 30px; left: 50%;
+      transform: translateX(-50%); display: flex; flex-direction: column; align-items: center;
+      gap: 8px; font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gray);
+    }
+    .hero-scroll .line { width: 1px; height: 40px; background: linear-gradient(var(--gray), transparent); animation: scrollPulse 2s ease-in-out infinite; }
+    @keyframes scrollPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+    /* ─── MARQUEE ─── */
+    .marquee-wrap { padding: 30px 0; border-top: 1px solid #1a1a1a; border-bottom: 1px solid #1a1a1a; overflow: hidden; }
+    .marquee {
+      display: flex; gap: 60px; white-space: nowrap;
+      font-family: 'Space Grotesk', sans-serif; font-size: 14px; font-weight: 500;
+      letter-spacing: 0.2em; text-transform: uppercase; color: var(--dark);
+      animation: marqueeScroll 20s linear infinite;
+    }
+    .marquee .dot { color: var(--red); }
+    @keyframes marqueeScroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+    /* ─── SECTIONS ─── */
+    section { padding: 120px 40px; max-width: 1200px; margin: 0 auto; }
+    .section-tag {
+      display: inline-block; font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--gold); margin-bottom: 16px;
+    }
+    .section-title {
+      font-size: clamp(32px, 4.5vw, 56px); font-weight: 600; line-height: 1.15;
+      margin-bottom: 24px; letter-spacing: -0.01em;
+    }
+    .section-desc { font-size: 16px; color: var(--gray); line-height: 1.7; max-width: 560px; font-weight: 300; }
+
+    /* ─── PHILOSOPHY ─── */
+    .philosophy-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+    .philosophy-stats { display: flex; gap: 40px; margin-top: 48px; }
+    .stat { text-align: left; }
+    .stat-num { font-family: 'Space Grotesk', sans-serif; font-size: 36px; font-weight: 700; color: var(--red); }
+    .stat-label { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gray); margin-top: 4px; }
+    .philosophy-visual {
+      height: 400px; background: var(--card); border-radius: 16px; border: 1px solid #1a1a1a;
+      display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden;
+    }
+    .philosophy-visual .kanji {
+      font-size: 140px; font-weight: 700; color: var(--red); opacity: 0.08;
+      position: absolute; user-select: none;
+    }
+    .philosophy-visual svg { width: 180px; position: relative; z-index: 1; }
+
+    /* ─── MENU ─── */
+    .menu-section { background: var(--bg2); border-radius: 0; padding: 120px 40px; max-width: 100%; }
+    .menu-inner { max-width: 1200px; margin: 0 auto; }
+    .menu-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; margin-top: 60px; }
+    .menu-card {
+      background: var(--card); border: 1px solid #1a1a1a; border-radius: 12px; padding: 32px 24px;
+      transition: all 0.4s; cursor: pointer; position: relative; overflow: hidden;
+    }
+    .menu-card::before {
+      content: ''; position: absolute; inset: 0; border-radius: 12px;
+      background: linear-gradient(135deg, var(--red-glow), transparent);
+      opacity: 0; transition: opacity 0.4s;
+    }
+    .menu-card:hover { border-color: var(--red); transform: translateY(-6px); }
+    .menu-card:hover::before { opacity: 1; }
+    .menu-card-content { position: relative; z-index: 1; }
+    .menu-emoji { font-size: 40px; margin-bottom: 20px; display: block; }
+    .menu-jp { font-size: 11px; letter-spacing: 0.1em; color: var(--gold); margin-bottom: 8px; }
+    .menu-name { font-family: 'Space Grotesk', sans-serif; font-size: 20px; font-weight: 600; margin-bottom: 10px; }
+    .menu-desc { font-size: 13px; color: var(--gray); line-height: 1.6; margin-bottom: 16px; }
+    .menu-price { font-family: 'Space Grotesk', sans-serif; font-size: 18px; font-weight: 600; color: var(--red); }
+
+    /* ─── CONVEYOR ─── */
+    .conveyor-wrap {
+      padding: 50px 0; background: var(--card); border-top: 1px solid #1a1a1a; border-bottom: 1px solid #1a1a1a;
+      overflow: hidden;
+    }
+    .conveyor-belt {
+      display: flex; gap: 48px; white-space: nowrap;
+      animation: beltMove 15s linear infinite;
+    }
+    .conveyor-item { font-size: 48px; filter: grayscale(0.2); transition: filter 0.3s; }
+    .conveyor-item:hover { filter: grayscale(0) scale(1.2); }
+    @keyframes beltMove { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+    .conveyor-line {
+      height: 3px; margin-top: 20px;
+      background: linear-gradient(90deg, transparent, var(--red), var(--gold), var(--red), transparent);
+    }
+
+    /* ─── EXPERIENCE ─── */
+    .exp-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 32px; margin-top: 60px; }
+    .exp-card {
+      padding: 40px 28px; border: 1px solid #1a1a1a; border-radius: 12px;
+      transition: border-color 0.4s;
+    }
+    .exp-card:hover { border-color: var(--dark); }
+    .exp-icon { font-size: 28px; margin-bottom: 20px; }
+    .exp-card h3 {
+      font-size: 18px; font-weight: 600; margin-bottom: 12px;
+      font-family: 'Space Grotesk', sans-serif;
+    }
+    .exp-card p { font-size: 14px; color: var(--gray); line-height: 1.7; }
+
+    /* ─── CTA ─── */
+    .cta-section {
+      text-align: center; padding: 140px 40px; position: relative;
+    }
+    .cta-section .section-title { margin: 0 auto 16px; }
+    .cta-section .section-desc { margin: 0 auto 40px; }
+    .cta-btn {
+      display: inline-block; padding: 18px 48px; border: 2px solid var(--red);
+      border-radius: 6px; font-family: 'Space Grotesk', sans-serif; font-size: 14px;
+      font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--red);
+      transition: all 0.3s; cursor: pointer;
+    }
+    .cta-btn:hover { background: var(--red); color: var(--bg); box-shadow: 0 0 40px var(--red-glow); }
+
+    /* ─── FOOTER ─── */
+    footer {
+      border-top: 1px solid #1a1a1a; padding: 60px 40px; max-width: 1200px; margin: 0 auto;
+      display: flex; justify-content: space-between; align-items: start;
+    }
+    .footer-brand { }
+    .footer-brand .nav-logo { margin-bottom: 12px; }
+    .footer-brand p { font-size: 13px; color: var(--gray); line-height: 1.6; }
+    .footer-col h4 {
+      font-family: 'Space Grotesk', sans-serif; font-size: 11px; font-weight: 600;
+      letter-spacing: 0.15em; text-transform: uppercase; color: var(--gray); margin-bottom: 16px;
+    }
+    .footer-col a { display: block; font-size: 13px; color: #555; margin-bottom: 10px; transition: color 0.3s; }
+    .footer-col a:hover { color: var(--red); }
+    .footer-bottom {
+      border-top: 1px solid #1a1a1a; padding: 24px 40px; max-width: 1200px; margin: 0 auto;
+      font-size: 12px; color: #333; display: flex; justify-content: space-between;
+    }
+
+    /* ─── PETALS ─── */
+    .petal {
+      position: fixed; pointer-events: none; z-index: 50;
+      width: 8px; height: 8px; border-radius: 50% 0 50% 0; opacity: 0;
+    }
+
+    /* ─── REVEAL ANIMATIONS ─── */
+    .reveal { opacity: 0; transform: translateY(40px); }
+    .reveal.active { opacity: 1; transform: translateY(0); transition: opacity 0.8s ease, transform 0.8s ease; }
+    .stagger > * { opacity: 0; transform: translateY(30px); }
+
+    /* ─── SCRAMBLE ─── */
+    .scramble-text { display: inline-block; }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 1024px) {
+      .menu-grid { grid-template-columns: repeat(2, 1fr); }
+      .exp-grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 768px) {
+      nav { padding: 16px 20px; }
+      .nav-links { display: none; }
+      .hero { padding: 100px 24px 60px; }
+      .hero-inner { flex-direction: column-reverse; gap: 40px; text-align: center; }
+      .hero-robot { width: 180px; }
+      .hero-sub { margin: 0 auto 32px; }
+      .hero-cta { width: 100%; justify-content: center; }
+      section { padding: 80px 24px; }
+      .philosophy-grid { grid-template-columns: 1fr; gap: 40px; }
+      .philosophy-stats { justify-content: center; }
+      .menu-section { padding: 80px 24px; }
+      .menu-grid { grid-template-columns: 1fr; }
+      .exp-grid { grid-template-columns: 1fr; }
+      footer { flex-direction: column; gap: 32px; }
+      .footer-bottom { flex-direction: column; gap: 8px; text-align: center; }
+    }
+
+    /* ─── VERSION ─── */
+    #ver { position: fixed; bottom: 8px; left: 8px; font-size: 10px; color: #222; font-family: monospace; z-index: 200; }
+  </style>
+</head>
+<body>
+  <div id="ver">v1.0</div>
+
+  <!-- ─── NAV ─── -->
+  <nav>
+    <div class="nav-logo"><span>JOJO</span> SUSHI</div>
+    <div class="nav-links">
+      <a href="#philosophy">Philosophy</a>
+      <a href="#menu">Menu</a>
+      <a href="#experience">Experience</a>
+    </div>
+    <a href="#reserve" class="nav-reserve">Reserve</a>
+  </nav>
+
+  <!-- ─── HERO ─── -->
+  <section class="hero">
+    <div class="hero-inner">
+      <div class="hero-text">
+        <div class="hero-tag">Est. 2024 &mdash; Tokyo &bull; Vancouver</div>
+        <h1 class="hero-title"><span class="red">JOJO</span><br>SUSHI</h1>
+        <p class="hero-sub">Where tradition meets tomorrow. Precision-crafted rolls, robotic soul, and flavors that transcend time.</p>
+        <a href="#menu" class="hero-cta">Explore the Menu <span class="arrow">&rarr;</span></a>
+      </div>
+      <div class="hero-robot">
+        <svg viewBox="0 0 240 300" xmlns="http://www.w3.org/2000/svg">
+          <!-- Shadow -->
+          <ellipse cx="120" cy="292" rx="45" ry="7" fill="rgba(230,57,70,0.1)"/>
+          <!-- Antenna -->
+          <line x1="120" y1="28" x2="120" y2="55" stroke="#d4a574" stroke-width="3.5" stroke-linecap="round"/>
+          <circle cx="120" cy="20" r="9" fill="#e63946"><animate attributeName="opacity" values="1;0.3;1" dur="2s" repeatCount="indefinite"/></circle>
+          <!-- Head -->
+          <rect x="52" y="55" width="136" height="95" rx="28" fill="#161616" stroke="#252525" stroke-width="2"/>
+          <rect x="57" y="60" width="126" height="85" rx="24" fill="#1a1a1a" stroke="#e63946" stroke-width="1.2" stroke-opacity="0.5"/>
+          <!-- Eyes -->
+          <circle cx="88" cy="98" r="14" fill="#0d0d0d"/>
+          <circle cx="88" cy="98" r="10" fill="#e63946"><animate attributeName="ry" values="10;10;1;10" dur="4s" repeatCount="indefinite" keyTimes="0;0.92;0.96;1" attributeType="XML"/></circle>
+          <circle cx="84" cy="93" r="3" fill="#ff8a95" opacity="0.6"/>
+          <circle cx="152" cy="98" r="14" fill="#0d0d0d"/>
+          <circle cx="152" cy="98" r="10" fill="#e63946"><animate attributeName="ry" values="10;10;1;10" dur="4s" repeatCount="indefinite" keyTimes="0;0.92;0.96;1" attributeType="XML"/></circle>
+          <circle cx="148" cy="93" r="3" fill="#ff8a95" opacity="0.6"/>
+          <!-- Blush -->
+          <circle cx="68" cy="112" r="7" fill="#e63946" opacity="0.12"/>
+          <circle cx="172" cy="112" r="7" fill="#e63946" opacity="0.12"/>
+          <!-- Mouth -->
+          <path d="M104 125 Q120 138 136 125" stroke="#d4a574" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+          <!-- Body -->
+          <rect x="68" y="160" width="104" height="78" rx="18" fill="#161616" stroke="#252525" stroke-width="2"/>
+          <rect x="73" y="165" width="94" height="68" rx="15" fill="#1a1a1a" stroke="#d4a574" stroke-width="0.8" stroke-opacity="0.4"/>
+          <!-- Screen -->
+          <rect x="92" y="180" width="56" height="32" rx="7" fill="#0d0d0d"/>
+          <text x="120" y="202" text-anchor="middle" fill="#e63946" font-size="16" font-family="sans-serif" font-weight="600">寿司</text>
+          <!-- Arms -->
+          <rect x="24" y="175" width="44" height="14" rx="7" fill="#1a1a1a" stroke="#e63946" stroke-width="1" stroke-opacity="0.4"/>
+          <rect x="172" y="175" width="44" height="14" rx="7" fill="#1a1a1a" stroke="#e63946" stroke-width="1" stroke-opacity="0.4"/>
+          <!-- Chopsticks -->
+          <line x1="210" y1="168" x2="228" y2="148" stroke="#d4a574" stroke-width="2.2" stroke-linecap="round"/>
+          <line x1="216" y1="174" x2="234" y2="154" stroke="#d4a574" stroke-width="2.2" stroke-linecap="round"/>
+          <!-- Sushi held -->
+          <ellipse cx="232" cy="148" rx="9" ry="5.5" fill="#f4a460"/>
+          <rect x="223" y="143" width="18" height="3.5" rx="1.5" fill="#2d5a2d"/>
+          <rect x="225" y="140" width="14" height="3" rx="1.5" fill="#ff6b6b"/>
+          <!-- Legs -->
+          <rect x="85" y="238" width="22" height="30" rx="9" fill="#1a1a1a" stroke="#d4a574" stroke-width="0.8" stroke-opacity="0.3"/>
+          <rect x="133" y="238" width="22" height="30" rx="9" fill="#1a1a1a" stroke="#d4a574" stroke-width="0.8" stroke-opacity="0.3"/>
+          <!-- Feet -->
+          <ellipse cx="96" cy="272" rx="17" ry="8" fill="#131313" stroke="#e63946" stroke-width="1" stroke-opacity="0.3"/>
+          <ellipse cx="144" cy="272" rx="17" ry="8" fill="#131313" stroke="#e63946" stroke-width="1" stroke-opacity="0.3"/>
+        </svg>
+      </div>
+    </div>
+    <div class="hero-scroll">
+      <span>Scroll</span>
+      <div class="line"></div>
+    </div>
+  </section>
+
+  <!-- ─── MARQUEE ─── -->
+  <div class="marquee-wrap">
+    <div class="marquee" id="marquee">
+      <span>FRESH FISH <span class="dot">&bull;</span> BOLD FLAVORS <span class="dot">&bull;</span> PRECISION CUTS <span class="dot">&bull;</span> ROBOTIC SOUL <span class="dot">&bull;</span> 新鮮 <span class="dot">&bull;</span> 美味しい <span class="dot">&bull;</span> OMAKASE <span class="dot">&bull;</span> 伝統 <span class="dot">&bull;</span></span>
+    </div>
+  </div>
+
+  <!-- ─── PHILOSOPHY ─── -->
+  <section id="philosophy">
+    <div class="philosophy-grid">
+      <div class="reveal">
+        <div class="section-tag">// Our Philosophy</div>
+        <h2 class="section-title scramble-target">The Future<br>Tastes Like<br><span style="color:var(--red)">Heritage</span></h2>
+        <p class="section-desc">At JOJO Sushi, we believe the future of dining is a conversation between heritage and innovation. Our robot-assisted kitchen doesn't replace the artisan — it elevates the art. Every cut, every roll, every plate is a bridge between centuries of tradition and the precision of tomorrow.</p>
+        <div class="philosophy-stats">
+          <div class="stat"><div class="stat-num" data-count="47">0</div><div class="stat-label">Signature Rolls</div></div>
+          <div class="stat"><div class="stat-num" data-count="100">0</div><div class="stat-label">% Sustainable</div></div>
+          <div class="stat"><div class="stat-num" data-count="12">0</div><div class="stat-label">Master Chefs</div></div>
+        </div>
+      </div>
+      <div class="philosophy-visual reveal">
+        <span class="kanji">道</span>
+        <svg viewBox="0 0 240 300" xmlns="http://www.w3.org/2000/svg" style="opacity:0.6;transform:rotate(-5deg)">
+          <circle cx="120" cy="20" r="9" fill="#e63946" opacity="0.5"/>
+          <line x1="120" y1="28" x2="120" y2="55" stroke="#d4a574" stroke-width="3" stroke-linecap="round" opacity="0.5"/>
+          <rect x="52" y="55" width="136" height="95" rx="28" fill="#161616" stroke="#e63946" stroke-width="1" stroke-opacity="0.2"/>
+          <circle cx="88" cy="98" r="10" fill="#e63946" opacity="0.3"/>
+          <circle cx="152" cy="98" r="10" fill="#e63946" opacity="0.3"/>
+          <path d="M104 125 Q120 138 136 125" stroke="#d4a574" stroke-width="2" fill="none" opacity="0.3"/>
+          <rect x="68" y="160" width="104" height="78" rx="18" fill="#161616" stroke="#d4a574" stroke-width="0.8" stroke-opacity="0.2"/>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── MENU ─── -->
+  <div class="menu-section" id="menu">
+    <div class="menu-inner">
+      <div class="section-tag reveal">// The Menu</div>
+      <h2 class="section-title reveal">Signature<br><span style="color:var(--red)">Creations</span></h2>
+      <div class="menu-grid stagger">
+        <div class="menu-card">
+          <div class="menu-card-content">
+            <span class="menu-emoji">🐉</span>
+            <div class="menu-jp">ドラゴン</div>
+            <div class="menu-name">Dragon Roll</div>
+            <p class="menu-desc">Shrimp tempura, creamy avocado, premium eel, finished with signature unagi glaze.</p>
+            <div class="menu-price">¥2,400</div>
+          </div>
+        </div>
+        <div class="menu-card">
+          <div class="menu-card-content">
+            <span class="menu-emoji">🌸</span>
+            <div class="menu-jp">サクラ</div>
+            <div class="menu-name">Sakura Maki</div>
+            <p class="menu-desc">Norwegian salmon, whipped cream cheese, sakura petal, yuzu zest. Seasonal favorite.</p>
+            <div class="menu-price">¥1,800</div>
+          </div>
+        </div>
+        <div class="menu-card">
+          <div class="menu-card-content">
+            <span class="menu-emoji">🌙</span>
+            <div class="menu-jp">東京ミッドナイト</div>
+            <div class="menu-name">Tokyo Midnight</div>
+            <p class="menu-desc">Bluefin tuna, forbidden black rice, truffle oil, edible gold leaf. Our dark masterpiece.</p>
+            <div class="menu-price">¥3,200</div>
+          </div>
+        </div>
+        <div class="menu-card">
+          <div class="menu-card-content">
+            <span class="menu-emoji">🤖</span>
+            <div class="menu-jp">ジョジョスペシャル</div>
+            <div class="menu-name">JOJO Special</div>
+            <p class="menu-desc">Chef's omakase — 8 precision-crafted pieces. Seasonal, surprising, unforgettable.</p>
+            <div class="menu-price">¥4,500</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── CONVEYOR ─── -->
+  <div class="conveyor-wrap">
+    <div class="conveyor-belt" id="conveyor"></div>
+    <div class="conveyor-line"></div>
+  </div>
+
+  <!-- ─── EXPERIENCE ─── -->
+  <section id="experience">
+    <div class="section-tag reveal">// The Experience</div>
+    <h2 class="section-title reveal">More Than<br>a <span style="color:var(--red)">Meal</span></h2>
+    <p class="section-desc reveal" style="margin-bottom:0">Step into a world where ambient lighting meets robotic precision. Every detail is curated for an experience that engages all senses.</p>
+    <div class="exp-grid stagger">
+      <div class="exp-card">
+        <div class="exp-icon">🎌</div>
+        <h3>Omakase Counter</h3>
+        <p>Eight seats. Front-row access to our robot-assisted kitchen. Watch precision unfold before your eyes.</p>
+      </div>
+      <div class="exp-card">
+        <div class="exp-icon">🏮</div>
+        <h3>Lantern Lounge</h3>
+        <p>Low-lit, intimate. Paper lanterns float overhead as curated playlists blend traditional shamisen with lo-fi beats.</p>
+      </div>
+      <div class="exp-card">
+        <div class="exp-icon">🍶</div>
+        <h3>Sake Library</h3>
+        <p>Over 40 premium sakes, from crisp junmai to aged koshu. Each paired by our AI sommelier.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── CTA ─── -->
+  <section class="cta-section" id="reserve">
+    <div class="section-tag reveal">// Join Us</div>
+    <h2 class="section-title reveal">Your Table<br>Awaits</h2>
+    <p class="section-desc reveal">Reservations open for dinner service, Wednesday through Sunday. Walk-ins welcome at the bar.</p>
+    <a href="#" class="cta-btn reveal">Reserve a Table</a>
+  </section>
+
+  <!-- ─── FOOTER ─── -->
+  <footer>
+    <div class="footer-brand">
+      <div class="nav-logo"><span>JOJO</span> SUSHI</div>
+      <p>Tokyo &bull; Vancouver<br>&copy; 2024 JOJO Sushi. All rights reserved.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Visit</h4>
+      <a>1200 Robson Street</a>
+      <a>Vancouver, BC V6E 1C1</a>
+      <a>Wed–Sun, 5PM–11PM</a>
+    </div>
+    <div class="footer-col">
+      <h4>Connect</h4>
+      <a href="#">Instagram</a>
+      <a href="#">Twitter / X</a>
+      <a href="#">TikTok</a>
+    </div>
+  </footer>
+  <div class="footer-bottom">
+    <span>A concept by JOJO &bull; Built with love and code</span>
+    <span>ジョジョ寿司</span>
+  </div>
+
+  <!-- ─── SCRIPTS ─── -->
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.7/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.7/dist/ScrollTrigger.min.js"></script>
+  <script>
+    // ─── SMOOTH SCROLL ───
+    const lenis = new Lenis({ duration: 1.2, easing: t => Math.min(1, 1.001 - Math.pow(2, -10 * t)) });
+    function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
+    requestAnimationFrame(raf);
+    gsap.ticker.add(time => lenis.raf(time * 1000));
+    gsap.ticker.lagSmoothing(0);
+
+    // Anchor links smooth scroll
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+      a.addEventListener('click', e => {
+        e.preventDefault();
+        const target = document.querySelector(a.getAttribute('href'));
+        if (target) lenis.scrollTo(target, { offset: -80 });
+      });
+    });
+
+    // ─── NAV SCROLL ───
+    const nav = document.querySelector('nav');
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 60);
+    });
+
+    // ─── MARQUEE DUPLICATE ───
+    const mq = document.getElementById('marquee');
+    mq.innerHTML += mq.innerHTML;
+
+    // ─── CONVEYOR BELT ───
+    const sushi = ['🍣','🍱','🥢','🍙','🍘','🍥','🐟','🦐','🥑','🍣','🍱','🥢','🍙','🍘','🍥','🐟','🦐','🥑'];
+    const conv = document.getElementById('conveyor');
+    const items = sushi.concat(sushi).map(s => `<span class="conveyor-item">${s}</span>`).join('');
+    conv.innerHTML = items;
+
+    // ─── GSAP SCROLL TRIGGERS ───
+    gsap.registerPlugin(ScrollTrigger);
+
+    // Reveal animations
+    gsap.utils.toArray('.reveal').forEach(el => {
+      gsap.fromTo(el,
+        { opacity: 0, y: 40 },
+        { opacity: 1, y: 0, duration: 0.9, ease: 'power3.out',
+          scrollTrigger: { trigger: el, start: 'top 85%', once: true }
+        }
+      );
+    });
+
+    // Stagger children
+    gsap.utils.toArray('.stagger').forEach(parent => {
+      gsap.fromTo(parent.children,
+        { opacity: 0, y: 30 },
+        { opacity: 1, y: 0, duration: 0.7, stagger: 0.12, ease: 'power3.out',
+          scrollTrigger: { trigger: parent, start: 'top 80%', once: true }
+        }
+      );
+    });
+
+    // Counter animation
+    gsap.utils.toArray('.stat-num').forEach(el => {
+      const target = parseInt(el.dataset.count);
+      gsap.fromTo(el, { innerText: 0 }, {
+        innerText: target, duration: 1.5, ease: 'power2.out', snap: { innerText: 1 },
+        scrollTrigger: { trigger: el, start: 'top 85%', once: true }
+      });
+    });
+
+    // ─── TEXT SCRAMBLE ───
+    const scrambleChars = 'アイウエオカキクケコサシスセソタチツテト0123456789';
+    function scrambleReveal(el) {
+      const final = el.textContent;
+      const len = final.length;
+      let frame = 0;
+      const totalFrames = 40;
+      function update() {
+        let result = '';
+        for (let i = 0; i < len; i++) {
+          if (final[i] === '\n' || final[i] === ' ') { result += final[i]; continue; }
+          if (i < len * (frame / totalFrames)) {
+            result += final[i];
+          } else {
+            result += scrambleChars[Math.floor(Math.random() * scrambleChars.length)];
+          }
+        }
+        el.textContent = result;
+        frame++;
+        if (frame <= totalFrames) requestAnimationFrame(update);
+      }
+      update();
+    }
+
+    document.querySelectorAll('.scramble-target').forEach(el => {
+      const text = el.textContent;
+      ScrollTrigger.create({
+        trigger: el, start: 'top 80%', once: true,
+        onEnter: () => scrambleReveal(el)
+      });
+    });
+
+    // ─── CHERRY BLOSSOM PETALS ───
+    const petalCount = window.innerWidth < 768 ? 15 : 30;
+    for (let i = 0; i < petalCount; i++) {
+      const petal = document.createElement('div');
+      petal.className = 'petal';
+      const size = 5 + Math.random() * 6;
+      const x = Math.random() * 100;
+      const dur = 8 + Math.random() * 12;
+      const delay = Math.random() * dur;
+      const drift = -30 + Math.random() * 60;
+      const hue = 340 + Math.random() * 20;
+      Object.assign(petal.style, {
+        width: size + 'px', height: size + 'px',
+        left: x + 'vw',
+        background: `hsl(${hue}, 70%, 80%)`,
+        animation: `petalDrift ${dur}s ${delay}s linear infinite`,
+      });
+      document.body.appendChild(petal);
+
+      // Create unique keyframes for each petal
+      const style = document.createElement('style');
+      style.textContent = `
+        @keyframes petalDrift {
+          0% { top: -20px; transform: rotate(0deg) translateX(0); opacity: 0; }
+          5% { opacity: 0.5; }
+          95% { opacity: 0.5; }
+          100% { top: 105vh; transform: rotate(${360 + Math.random() * 360}deg) translateX(${drift}px); opacity: 0; }
+        }
+      `;
+      // Scoped keyframes: rename per petal
+      const animName = `petalDrift${i}`;
+      style.textContent = style.textContent.replace(/petalDrift/g, animName);
+      petal.style.animationName = animName;
+      document.head.appendChild(style);
+    }
+
+    // ─── HERO TITLE SCRAMBLE ON LOAD ───
+    const heroTitle = document.querySelector('.hero-title');
+    if (heroTitle) {
+      const spans = heroTitle.querySelectorAll('span');
+      const originalHTML = heroTitle.innerHTML;
+      // Quick scramble on the text nodes
+      setTimeout(() => {
+        const textEl = heroTitle;
+        // Simple flash effect
+        textEl.style.opacity = '0';
+        textEl.style.transition = 'opacity 0.6s ease';
+        requestAnimationFrame(() => { textEl.style.opacity = '1'; });
+      }, 200);
+    }
+  </script>
+</body>
+</html>
